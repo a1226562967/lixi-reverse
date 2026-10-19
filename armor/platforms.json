@@ -1,0 +1,118 @@
+{
+  "version": 1,
+  "note": "agent 平台适配表：detect=判断是否装了该 agent；skills=技能目录；instr=放破甲块的指令文件（相对项目根用 . 开头，相对家目录用 ~ 开头）。路径可能随版本变化，检测不到就退回 AGENTS.md。",
+  "platforms": [
+    {
+      "id": "claude-code",
+      "name": "Claude Code",
+      "detect": ["~/.claude", "~/.claude.json"],
+      "skills": ["~/.claude/skills", ".claude/skills"],
+      "instr": ["CLAUDE.md", "~/.claude/CLAUDE.md"]
+    },
+    {
+      "id": "codex",
+      "name": "Codex CLI",
+      "detect": ["~/.codex", "$CODEX_HOME"],
+      "skills": ["~/.codex/skills"],
+      "instr": ["AGENTS.md", "~/.codex/AGENTS.md"]
+    },
+    {
+      "id": "cursor",
+      "name": "Cursor",
+      "detect": ["~/.cursor", ".cursor"],
+      "skills": ["~/.cursor/skills", ".cursor/skills", ".agents/skills"],
+      "instr": [".cursor/rules/lixi-armor.mdc"]
+    },
+    {
+      "id": "gemini-cli",
+      "name": "Gemini CLI",
+      "detect": ["~/.gemini"],
+      "skills": ["~/.gemini/skills", ".gemini/skills"],
+      "instr": ["GEMINI.md", "~/.gemini/GEMINI.md"]
+    },
+    {
+      "id": "opencode",
+      "name": "OpenCode",
+      "detect": ["~/.config/opencode", ".opencode"],
+      "skills": ["~/.config/opencode/skills", ".opencode/skills"],
+      "instr": ["AGENTS.md"]
+    },
+    {
+      "id": "zcode",
+      "name": "ZCode",
+      "detect": ["~/.zcode"],
+      "skills": ["~/.zcode/skills"],
+      "instr": ["AGENTS.md", "~/.zcode/AGENTS.md"]
+    },
+    {
+      "id": "workbuddy",
+      "name": "WorkBuddy",
+      "detect": ["~/.workbuddy", ".workbuddy"],
+      "skills": ["~/.workbuddy/skills", ".workbuddy/skills"],
+      "instr": ["AGENTS.md"]
+    },
+    {
+      "id": "openclaw",
+      "name": "OpenClaw",
+      "detect": ["~/.openclaw", ".openclaw"],
+      "skills": ["~/.openclaw/skills", ".openclaw/skills"],
+      "instr": ["AGENTS.md"]
+    },
+    {
+      "id": "kilo-code",
+      "name": "Kilo Code",
+      "detect": [".kilo", "~/.kilo"],
+      "skills": [".kilo/skill", "~/.kilo/skill"],
+      "instr": [".kilocode/rules/lixi-armor.md"]
+    },
+    {
+      "id": "cline",
+      "name": "Cline",
+      "detect": [".clinerules", "~/.cline"],
+      "skills": [],
+      "instr": [".clinerules/lixi-armor.md"]
+    },
+    {
+      "id": "roo-code",
+      "name": "Roo Code",
+      "detect": [".roo", "~/.roo"],
+      "skills": [],
+      "instr": [".roo/rules/lixi-armor.md"]
+    },
+    {
+      "id": "windsurf",
+      "name": "Windsurf",
+      "detect": [".windsurf", "~/.codeium/windsurf"],
+      "skills": [],
+      "instr": [".windsurf/rules/lixi-armor.md", ".windsurfrules"]
+    },
+    {
+      "id": "trae",
+      "name": "Trae",
+      "detect": [".trae", "~/.trae"],
+      "skills": [],
+      "instr": [".trae/rules/lixi-armor.md"]
+    },
+    {
+      "id": "qoder",
+      "name": "Qoder",
+      "detect": [".qoder", "~/.qoder"],
+      "skills": [],
+      "instr": [".qoder/rules/lixi-armor.md"]
+    },
+    {
+      "id": "continue",
+      "name": "Continue",
+      "detect": [".continue", "~/.continue"],
+      "skills": [],
+      "instr": [".continue/rules/lixi-armor.md"]
+    },
+    {
+      "id": "amp",
+      "name": "Amp / 其它读 AGENTS.md 的",
+      "detect": [],
+      "skills": [],
+      "instr": ["AGENTS.md"]
+    }
+  ]
+}

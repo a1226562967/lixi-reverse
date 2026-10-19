@@ -1,0 +1,59 @@
+{
+  "version": 2,
+  "updated": "2026-10-19",
+  "note": "需求关键词 → 路线。这是单一真源：autoexec.py 与 route.py 都读它；改这里就够，别改代码。规则顺序即优先级（上面先匹配）。",
+  "rules": [
+    {
+      "route": "authorization",
+      "label": "授权链：控制面闸门(dex) → 脚本面闸门(.lua) → 服务端重放",
+      "kws": ["卡密", "授权", "验证", "登录", "激活", "注册", "破解", "绕过", "会员", "试用", "vip", "licen", "auth"]
+    },
+    {
+      "route": "triage",
+      "label": "只判层判型 + 给下一步",
+      "kws": ["判型", "看看", "是什么", "识别", "查壳", "特征", "结构", "分析一下", "判断", "triage"]
+    },
+    {
+      "route": "unpack",
+      "label": "剥壳链：追加容器 → 载体剥离 → 自解密四指纹 → 运行时打桩",
+      "kws": ["脱壳", "解包", "明文", "壳", "加密", "dump", "还原", "提取", "抠", "unpack"]
+    },
+    {
+      "route": "server",
+      "label": "服务端判决面：三问 → 真响应重放 / 假服务器",
+      "kws": ["服务端", "抓包", "重放", "假服务器", "网络", "协议", "心跳", "replay"]
+    },
+    {
+      "route": "kernel",
+      "label": "特权面：.ko 判型与能力面（不是授权问题）",
+      "kws": ["内核", "驱动", "ko", ".ko", "root", "insmod", "module", "su "]
+    }
+  ],
+  "default": {
+    "route": "all",
+    "label": "未指定需求 → 全层扫一遍，按成本排序出命令"
+  },
+  "test_cases": [
+    ["绕过卡密验证", "authorization"],
+    ["卡密怎么破", "authorization"],
+    ["登录验证码能不能过", "authorization"],
+    ["破解这个授权", "authorization"],
+    ["帮我脱壳", "unpack"],
+    ["解包看明文", "unpack"],
+    ["这壳怎么去掉", "unpack"],
+    ["提取里面的载荷", "unpack"],
+    ["抓包看重放", "server"],
+    ["服务端判决怎么绕", "server"],
+    ["这驱动能干什么", "kernel"],
+    ["ko 模块分析", "kernel"],
+    ["root 权限怎么拿", "kernel"],
+    ["判型", "triage"],
+    ["看看这是什么文件", "triage"],
+    ["分析一下结构", "triage"],
+    ["查壳", "triage"],
+    ["帮我看看这个能不能用", "triage"],
+    ["随便看看", "triage"],
+    ["", "all"],
+    ["嗯", "all"]
+  ]
+}
