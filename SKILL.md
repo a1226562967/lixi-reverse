@@ -15,7 +15,7 @@ metadata:
   version: 1.3.0
   updated: 2026-10-19
   trigger: 李喜
-  scripts: 23 个，stdlib-only
+  scripts: 24 个，stdlib-only
   verified: 六个真实样本端到端（止痛药 APK / VS 驱动 / 死伤范围 / 起源 67MB / 章鱼哥 7 版 / 王者减CD）
 ---
 
@@ -114,6 +114,7 @@ python armor/inject.py --install-skill   # 顺便把技能复制到各平台 ski
 | B 段有 `thunk-return` | 生成 `pm patch $PID $((BASE+<vaddr>)) <原字节> <补丁>`，等确认返回值方向 |
 | `CIPHER`/`NOT-COMPILED` | 停止试解算法 → 找密钥源桩（`mov w0,#imm; ret`）或转运行时打桩 |
 | `BIG-ENTROPY-DATA` | **禁模拟**；找消费例程 |
+| 命中落点串（`/data/`、`/sdcard/`、`.t3card`、`card.txt`） | 判 **L1** → 先试**喂文件**（★，二进制都不用改） |
 | `APPENDED-CONTAINER` | 按 `13` 的五段读容器 + 用壳自己的 sha256 终检自证 |
 | `SELF-DECRYPT-STUB` | 找"解完跳到哪"；无设备用 unicorn 只仿真入口，不跑全程序 |
 | 提示语本地 0 命中 / 有签名字样 | 判据指向服务端 → 走重放，别改客户端判决 |
@@ -149,6 +150,7 @@ python armor/inject.py --install-skill   # 顺便把技能复制到各平台 ski
 8. 加密保护"怎么算"，不保护"谁被调用、返回值给谁" ⇒ 打桩点与加密复杂度解耦（明知有 VM 也可不逆 VM）。
 9. "响应能否伪造"（签名）≠"判定能否绕过"（**消费点在哪**）：`if code==1` 写在客户端就能改判。
 10. 零引用⇒授权层未链接；零 NOP⇒重建体；**别在字节里找恒真跳转**。
+13. **先找"授权落点层号"（L1–L5），再谈打法。** L1 磁盘结论（`/data/adb/*.t3card`、`/sdcard/.km`、`card.txt`）= **喂文件 ★**；L2 内存槽 = 翻槽/喂狗 ★★；L3 本地字段 = 补丁 ★★★；L4 服务端签名 = 打桩验签器或重放 ★★★★；**L5 每动作现场授权 = 死路，停手如实报**。57 件实测：0 例把授权放内核/远程，落点全在可写文件。（`19-forms-and-layers.md`）
 12. **反制"反 hook"就降层**：`Java → JNI → Native → libc → syscall`。上层被绕过（hook 不上/被检测/返回被改回）**不要硬刚，换更低的层** —— 越低越接近"它必须经过的"（`11-runtime-patching.md` §六）。
 11b. **"验证过" ≠ "有信息量"。** 断言"文件以 ELF 开头"必然通过但等于没说。用 `verify.py` 的权重机制裁决：只有**没被反驳 + 信息量够**才叫 grounded；`verify.py --ledger` 会记住 refuted 项（KNOWN FALSE），下一轮别重复提同一个错假设。
 11. **防守方自己承认挡不住的四条，优先打**：代码段外 Hook（PLT/GOT/vtable）、手工映射、改检测器自身、TOCTOU。**完整性校验只保护"某个时刻的某个区间"** —— 攻击打的是别的时刻、别的区间。（`15-defense-map.md`）

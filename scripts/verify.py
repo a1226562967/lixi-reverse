@@ -267,6 +267,42 @@ def k_thunk(d, c):
     return REFUTED, '%#x 不是跳板（已找到 %d 处：%s）' % (want, len(vas), ', '.join(hex(x) for x in sorted(vas)[:6])), 0.0
 
 
+
+def k_prologue(d, c):
+    """函数序言判据：AArch64 函数入口必然是 `sub sp,sp,#imm` / `stp x29,x30,[sp,#-imm]!` / `bti`。
+    定位到某个 vaddr 准备打补丁时**必过这一关** —— 目标偏移上不是这几类指令，就说明 vaddr→file 算错了，
+    或那根本不是函数入口（打在函数中间会闪退）。"""
+    try:
+        from elfprobe import Elf
+        elf = Elf(d)
+    except Exception as e:
+        return INCONCLUSIVE, 'ELF 解析失败：%r' % e, 0.0
+    v = int(str(c.get('vaddr', '0')), 0)
+    off = None
+    for p in elf.load_segments():
+        if p['vaddr'] <= v < p['vaddr'] + p['filesz']:
+            off = p['off'] + (v - p['vaddr'])
+            break
+    if off is None or off + 4 > len(d):
+        return REFUTED, '%#x 不在任何 PT_LOAD 的可读区间内（vaddr 算错了？）' % v, 0.0
+    w = struct.unpack_from('<I', d, off)[0]
+    kind = None
+    if (w & 0xFF800000) == 0xD1000000 and ((w >> 5) & 0x1F) == 31:
+        kind = 'sub sp,sp,#imm'
+    elif (w & 0xFFC00000) == 0xA9800000:
+        kind = 'stp xN,xM,[sp,#-imm]!'
+    elif w in (0xD503245F, 0xD503249F, 0xD50324DF, 0xD503251F):
+        kind = 'bti'
+    elif (w & 0xFFFF0000) == 0xD65F0000:
+        kind = 'ret（这是函数尾，不是头）'
+    if kind and 'ret' not in kind:
+        return VERIFIED, '%#x (file %#x) 是函数序言：%s（%s）' % (v, off, kind, ('%08x' % w)), 1.0
+    if kind:
+        return REFUTED, '%#x (file %#x) %s —— 你打到函数末尾去了' % (v, off, kind), 0.0
+    return REFUTED, ('%#x (file %#x) 首个字 = %08x，不是标准序言（sub sp/stp/bti）'
+                     ' ⇒ 要么 v2o 算错，要么这不是函数入口') % (v, off, w), 0.0
+
+
 HANDLERS = {
     'bytes_at': k_bytes_at,
     'u32_at': lambda d, c: k_u32(d, c, 4),
@@ -278,6 +314,7 @@ HANDLERS = {
     'dex_code': k_dex_method,
     'jni_method': k_jni,
     'thunk_at': k_thunk,
+    'prologue_at': k_prologue,
 }
 
 

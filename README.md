@@ -2,11 +2,23 @@
 
 Android 授权 / 卡密验证的全自动逆向分析技能包。启动词 **李喜**。
 
-> 一句话判据：能不能破由「判决归属」决定，不由「加密强度」决定。
+> 能不能破由「授权落点在哪」决定，不由「加密强度」决定。
 
-## 能力概览
+## 先判落点，再谈打法
 
-四层判型加一个服务端判决面：
+拿到样本不要先看加密。先回答一个问题：这份授权最终在**哪一层被消费**。层号一确定，打法与成本基本就锁死了。
+
+| 层 | 授权落点 | 识别特征 | 打法 | 成本 |
+|---|---|---|---|---|
+| L1 | 磁盘上的结论 | `/data/adb/*.t3card`、`/sdcard/.km`、`card.txt` | 喂文件，二进制都不用改 | ★ |
+| L2 | 内存里的状态槽 | 轮询式校验、心跳喂狗 | 翻槽 / 喂狗 | ★★ |
+| L3 | 本地字段 | 布尔值、版本字段、`if code==1` | 补丁，常见两字节 | ★★★ |
+| L4 | 服务端签名 | 响应带签名与时效 | 打桩验签器，或重放真实字节 | ★★★★ |
+| L5 | 每个动作现场授权 | 每次调用都回源 | 死路，如实报停 | — |
+
+判定依据来自 57 件样本的横向盘点：授权落点全部落在可写文件或本地字段上，没有一例把授权放进内核或远程强校验。同一批产品里「两字节能过」和「怎么都过不了」的差别，就在落点层号，不在加密强度。
+
+## 四层判型
 
 | 层 | 目标 | 判决通常在哪 |
 |---|---|---|
@@ -14,9 +26,8 @@ Android 授权 / 卡密验证的全自动逆向分析技能包。启动词 **李
 | 脚本面 | 壳里的 `.lua` | `if f.code == 1` 这类闸门 |
 | 载荷面 | ELF / `.so` / dump | 服务端签名与时效 |
 | 特权面 | `.ko` 内核模块、root 脚本 | 与授权无关，但是硬前提 |
-| 服务端 | 抓包与重放 | 真响应重放、假服务器 |
 
-一个入口脚本跑完只读分析，输出带原字节的可执行命令。不依赖 jadx、apktool、frida。
+在此之上还有服务端判决面：真响应重放、假服务器、SNI 侦察。
 
 ## 用法
 
@@ -31,6 +42,9 @@ Android 授权 / 卡密验证的全自动逆向分析技能包。启动词 **李
 ```powershell
 # 总入口：分诊 + 只读分析 + 生成 analysis\AUTO_PLAN.md
 python scripts\autoexec.py "<样本路径>" --need "判型"
+
+# 手法匹配：这个样本会走到哪一步、缺什么前提
+python scripts\casefit.py "<样本路径>"
 
 # 结构自检（不联网、不碰真实样本）
 python scripts\selftest.py
@@ -62,22 +76,33 @@ powershell -NoProfile -ExecutionPolicy Bypass -File ".\一键安装.ps1"        
 ├─ SKILL.md                     入口（技能系统靠它识别）
 ├─ VERSION
 ├─ armor/                       破甲层：ARMOR.md + inject.py + platforms.json
-├─ references/                  16 篇方法论与案例（01-triage … 16-js-runtime-shim）
-├─ scripts/                     24 个 Python 脚本 + xdc.mjs / xdc.ps1 / xdc.sh
+├─ references/                  19 篇方法论与案例（01-triage … 19-forms-and-layers）
+├─ scripts/                     25 个 Python 脚本 + xdc.mjs / xdc.ps1 / xdc.sh
 ├─ templates/case-agents-template.md
 ├─ 一键安装.ps1
 ├─ 安装说明.md
-├─ MANIFEST.json                52 个文件的字节数与 SHA-256
+├─ MANIFEST.json                56 个文件的字节数与 SHA-256
 └─ legacy-v1.0/                 第一代结构（S0–S4 流程）存档
 ```
 
+几篇值得先看的：
+
+| 文件 | 内容 |
+|---|---|
+| `references/17-reproducible-chain.md` | 从一份成品走到一个补丁，每步有命令、判据、失败分支 |
+| `references/18-corpus-and-decision-stack.md` | 57 件样本横向盘点：生态结构、三层授权栈、授权落点 |
+| `references/19-forms-and-layers.md` | 十种绕过形态与授权落点五层，从成品反推 |
+| `references/08-casebook.md` | 真实案例集，含坐标与失败教训 |
+
 ## 依赖
 
-Python 3.8 及以上，仅用标准库。`capstone` 可选，缺失时自动降级；`cryptography` 只被 `v2parse.py` 使用。目标平台是 Android（APK / dex / `.so` / `.ko`），分析脚本在 Windows 上运行。
+Python 3.8 及以上，仅用标准库。`capstone` 可选，缺失时自动降级。目标平台是 Android（APK / dex / `.so` / `.ko`），分析脚本在 Windows 上运行。
 
 ## 版本
 
-包内标注为 **1.8.0**（`MANIFEST.json` 与压缩包文件名一致）。注意 `VERSION` 文件内容为 `1.0.0`、`SKILL.md` 的 `metadata.version` 为 `1.3.0`，三处标注尚未统一，以 1.8.0 为准。
+**1.9.0**。相比 1.8.0：新增授权落点 L1–L5 判据、`references/17` 至 `19` 三篇、`scripts/casefit.py`；`verify.py` 增加 AArch64 函数序言校验（防止 vaddr 算错或补丁打在函数中间）。
+
+`VERSION` 文件内容为 `1.0.0`、`SKILL.md` 的 `metadata.version` 为 `1.3.0`，三处标注尚未统一，以 `MANIFEST.json` 的 1.9.0 为准。
 
 ## 完整性与自检
 
@@ -85,6 +110,6 @@ Python 3.8 及以上，仅用标准库。`capstone` 可选，缺失时自动降�
 python scripts\selftest.py
 ```
 
-实测结果：语法编译 24/24 通过，`elfprobe` 自检 PASS，`aesgcm` FIPS-197 自检 PASS；`v2parse` 因本机未安装 `cryptography` 跳过（不影响其余脚本）。
+实测结果：语法编译 25/25 通过，import 25/25 通过，`elfprobe` 自检 PASS，`aesgcm` FIPS-197 自检 PASS。MANIFEST 的 56 个文件字节与 SHA-256 全部匹配。
 
 MIT

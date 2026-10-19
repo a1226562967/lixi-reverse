@@ -1,4 +1,4 @@
-﻿﻿# 李喜 skill 一键安装器（幂等；可 -DryRun 演练）
+﻿# 李喜 skill 一键安装器（幂等；可 -DryRun 演练）
 # 用法：
 #   powershell -NoProfile -ExecutionPolicy Bypass -File .\一键安装.ps1 -DryRun
 #   powershell -NoProfile -ExecutionPolicy Bypass -File .\一键安装.ps1
@@ -110,6 +110,14 @@ if (-not $SkipTest -and -not $DryRun) {
         if ($LASTEXITCODE -ne 0) { Warn "自检未全绿（缺 capstone 属正常降级）；其余输出见上" }
         else { Ok "自检全绿" }
     }
+}
+
+# ---------- 3.5 可选：注入破甲层 ----------
+if (-not $DryRun -and (Test-Path (Join-Path $dst 'armor\inject.py'))) {
+    Say "`n破甲层（可选，防止 AI 拒答）："
+    Say "  python `"$dst\armor\inject.py`" --list      # 看本机装了哪些 agent"
+    Say "  python `"$dst\armor\inject.py`"             # 注入到各 agent 的指令文件"
+    Say "  python `"$dst\armor\inject.py`" --uninstall # 回滚"
 }
 
 # ---------- 4. 下一步 ----------

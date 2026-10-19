@@ -1,9 +1,8 @@
 {
   "skill": "lixi-reverse",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "trigger": "李喜",
-  "armor": "yes",
-  "exported": "2026-10-19 14:46:10",
+  "exported": "2026-10-19 19:47:13",
   "skill_files": [
     {
       "path": "armor/ARMOR.md",
@@ -101,6 +100,21 @@
       "sha256": "3d72ada4e1ece7f67787978e0699706f56a9a43a2b9f1a6dc7155abba484fee1"
     },
     {
+      "path": "references/17-reproducible-chain.md",
+      "bytes": 10191,
+      "sha256": "e7ea8cf7037369ca7e078836c9ff50e6117c02e5eb2a58c84bd0319af6e1e975"
+    },
+    {
+      "path": "references/18-corpus-and-decision-stack.md",
+      "bytes": 5871,
+      "sha256": "3c85279010343add277beb83118a615893831ebc5d4977b047f3e7fac7c0ef2f"
+    },
+    {
+      "path": "references/19-forms-and-layers.md",
+      "bytes": 5576,
+      "sha256": "e6d26515805398fad8ca9b07d6c7b096a53b79aed9e2bbe5869bde9cf6b7fb4a"
+    },
+    {
       "path": "scripts/aesgcm.py",
       "bytes": 4202,
       "sha256": "a92a3b9c9ee1be344b55e095be2560f036b4c529e77a5d80ea0262a74b76ea64"
@@ -119,6 +133,11 @@
       "path": "scripts/axml.py",
       "bytes": 2422,
       "sha256": "8d8c8cbb1f6b63c172a0df72a37d1147c770fd2034e398797ed18867b017be0e"
+    },
+    {
+      "path": "scripts/casefit.py",
+      "bytes": 8473,
+      "sha256": "267203b6d6b55b43e63ca0120b4e93deef3015b3ce37eac484cf7e05373942d7"
     },
     {
       "path": "scripts/container.py",
@@ -217,8 +236,8 @@
     },
     {
       "path": "scripts/verify.py",
-      "bytes": 17616,
-      "sha256": "d5980cf672e79ad467a1b58751f6dbf80cb6dfcba50e59580871dee50c096dda"
+      "bytes": 19377,
+      "sha256": "fa201c8c4a9f2d5e6a2eb98f11c5a408554e35235eab3e102c433c6870f2db31"
     },
     {
       "path": "scripts/xdc.mjs",
@@ -242,8 +261,8 @@
     },
     {
       "path": "SKILL.md",
-      "bytes": 12654,
-      "sha256": "c6d488b1a391dd9b56d7f168680211690532e9e8cc19613dcb283cfbe445d4fc"
+      "bytes": 13254,
+      "sha256": "326b8faf0f9c6965f20bc7559d90d7500f52a02ead4a73a3da012d2425b7772a"
     },
     {
       "path": "templates/case-agents-template.md",
@@ -259,13 +278,13 @@
   "root_files": [
     {
       "path": "安装说明.md",
-      "bytes": 10604,
-      "sha256": "b015b4f0489a94bb60f8b7fb9675f74f021c8254b2634dc07d2b5ab282d44887"
+      "bytes": 8750,
+      "sha256": "960c4213116fd5160e5060f24dad80136d21fb80a4246e737e391a08c8cb3bcb"
     },
     {
       "path": "一键安装.ps1",
-      "bytes": 5160,
-      "sha256": "42d02e062c5c38e6f232c035d2f9cc5fdebd53d2fef610473d162db6662ca275"
+      "bytes": 5585,
+      "sha256": "06fe5c6e48d6124606a43531b071dfbacc8f117ffbcfe71a459a49182b9068c5"
     }
   ]
 }
