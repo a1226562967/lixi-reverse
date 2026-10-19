@@ -1,4 +1,4 @@
-# lixi-nixiang-skill
+# lixi-reverse
 
 Android 授权 / 卡密验证的全自动逆向分析技能包。启动词 **李喜**。
 
